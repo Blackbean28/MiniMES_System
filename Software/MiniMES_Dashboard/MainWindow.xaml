@@ -1,0 +1,93 @@
+﻿<Window x:Class="MiniMES_Dashboard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        Title="Edge Node Monitoring System (Mini-MES)" Height="768" Width="1024"
+        Background="#F5F6FA">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="3.5*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="White" CornerRadius="8" Margin="0,0,0,10" Padding="10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                <GroupBox Header="[설비 1호기 - 선행 공정]" Margin="10,0,20,0" Padding="15" Width="250" BorderBrush="DarkGray">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Node1.Temperature, StringFormat=설비 온도: {0} ℃}" FontSize="18" FontWeight="Bold" Margin="0,5"/>
+                        <TextBlock Text="{Binding Node1.RPM, StringFormat=모터 속도: {0} RPM}" FontSize="16" Margin="0,5"/>
+                        <TextBlock Text="{Binding Node1.Current, StringFormat=소모 전류: {0} mA}" FontSize="16" Foreground="DarkRed" Margin="0,5"/>
+                        <TextBlock Text="{Binding Node1.ProductionCount, StringFormat=누적 생산량: {0} EA}" FontSize="14" Foreground="Gray" Margin="0,5"/>
+                        <Button Content="EMERGENCY STOP (1호기)" Command="{Binding StopNode1Command}" 
+        Background="#FF4757" Foreground="White" FontWeight="Bold" Height="40" Margin="0,15,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="[설비 2호기 - 후행 공정]" Margin="20,0,10,0" Padding="15" Width="250" BorderBrush="DarkGray">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Node2.Temperature, StringFormat=설비 온도: {0} ℃}" FontSize="18" FontWeight="Bold" Margin="0,5"/>
+                        <TextBlock Text="{Binding Node2.RPM, StringFormat=모터 속도: {0} RPM}" FontSize="16" Margin="0,5"/>
+                        <TextBlock Text="{Binding Node2.Current, StringFormat=소모 전류: {0} mA}" FontSize="16" Foreground="DarkRed" Margin="0,5"/>
+                        <TextBlock Text="{Binding Node2.ProductionCount, StringFormat=누적 생산량: {0} EA}" FontSize="14" Foreground="Gray" Margin="0,5"/>
+                        <Button Content="EMERGENCY STOP (2호기)" Command="{Binding StopNode2Command}" 
+        Background="#FF4757" Foreground="White" FontWeight="Bold" Height="40" Margin="0,15,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Background="White" CornerRadius="8" Margin="0,0,0,10" Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="[실시간 설비 온도 트렌드 (Predictive Maintenance)]" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10"/>
+
+                <lvc:CartesianChart Grid.Row="1" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
+                    <lvc:CartesianChart.Series>
+                        <lvc:LineSeries Title="Node 1 Temp" Values="{Binding Node1TempValues}" 
+                                        Stroke="#FF4757" Fill="Transparent" PointGeometrySize="0" LineSmoothness="0"/>
+                        <lvc:LineSeries Title="Node 2 Temp" Values="{Binding Node2TempValues}" 
+                                        Stroke="#2ED573" Fill="Transparent" PointGeometrySize="0" LineSmoothness="0"/>
+                    </lvc:CartesianChart.Series>
+
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="Temperature (℃)" MinValue="0" MaxValue="100"/>
+                    </lvc:CartesianChart.AxisY>
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Time (Latest 50 Data Points)" ShowLabels="False"/>
+                    </lvc:CartesianChart.AxisX>
+                </lvc:CartesianChart>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="[설비 이벤트 이력 및 알람 로깅]" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10"/>
+
+                <DataGrid Grid.Row="1" ItemsSource="{Binding EventLogs}" AutoGenerateColumns="False" 
+                          CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column" 
+                          GridLinesVisibility="Horizontal" AlternatingRowBackground="#F9F9F9"
+                          BorderThickness="1" BorderBrush="LightGray" Background="White">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="발생 시간 (Timestamp)" Binding="{Binding Timestamp}" Width="200" />
+                        <DataGridTextColumn Header="설비 번호" Binding="{Binding NodeId}" Width="100"/>
+                        <DataGridTextColumn Header="상태 코드" Binding="{Binding Status}" Width="150"/>
+                        <DataGridTextColumn Header="상세 메시지 (원인)" Binding="{Binding Message}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
