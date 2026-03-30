@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MiniMES_Dashboard")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a7021797976fe2b5560aafaaad5040b3d3335c73")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a45682ed57651869b41c25b0b027612743bca135")]
 [assembly: System.Reflection.AssemblyProductAttribute("MiniMES_Dashboard")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiniMES_Dashboard")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

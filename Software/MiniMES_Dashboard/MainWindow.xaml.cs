@@ -1,24 +1,16 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using MiniMES_Dashboard.ViewModels; // ViewModel 폴더 참조
 
 namespace MiniMES_Dashboard
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
+
+            // 핵심: 이 화면의 데이터 소스(DataContext)를 우리가 만든 ViewModel로 지정
+            this.DataContext = new DashboardViewModel();
         }
     }
 }
