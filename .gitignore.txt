@@ -1,0 +1,15 @@
+# C#  Visual Studio 무시 목록
+[Bb]in
+[Oo]bj
+.vs
+.user
+.suo
+
+# STM32  Eclipse(CubeIDE) 무시 목록
+Debug
+Release
+.elf
+.map
+.hex
+.bin
+.metadata

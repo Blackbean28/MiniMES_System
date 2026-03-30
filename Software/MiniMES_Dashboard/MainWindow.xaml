@@ -1,0 +1,26 @@
+﻿<Window x:Class="MiniMES_Dashboard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Edge Node Monitoring System (Mini-MES)" Height="768" Width="1024"
+        Background="#F5F6FA">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1.5*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="3.5*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="White" CornerRadius="8" Margin="0,0,0,10" Padding="10">
+            <TextBlock Text="[System Overall Status &amp; Control]" FontWeight="Bold" Foreground="Gray"/>
+        </Border>
+
+        <Border Grid.Row="1" Background="White" CornerRadius="8" Margin="0,0,0,10" Padding="10">
+            <TextBlock Text="[Real-time Process Trend Chart]" FontWeight="Bold" Foreground="Gray"/>
+        </Border>
+
+        <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="10">
+            <TextBlock Text="[Event History &amp; DB Log]" FontWeight="Bold" Foreground="Gray"/>
+        </Border>
+    </Grid>
+</Window>
