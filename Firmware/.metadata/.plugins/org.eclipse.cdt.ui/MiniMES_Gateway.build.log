@@ -1,0 +1,10 @@
+16:04:06 **** Incremental Build of configuration Debug for project MiniMES_Gateway ****
+make -j20 all 
+arm-none-eabi-size  MiniMES_Gateway.elf 
+   text	   data	    bss	    dec	    hex	filename
+  25656	     16	  18008	  43680	   aaa0	MiniMES_Gateway.elf
+Finished building: default.size.stdout
+ 
+
+16:04:06 Build Finished. 0 errors, 0 warnings. (took 217ms)
+

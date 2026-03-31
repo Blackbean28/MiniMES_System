@@ -47,17 +47,17 @@ osThreadId SensorTaskHandle;
 /* USER CODE BEGIN PV */
 
 // ★ 현업 팁: 이 숫자만 1 또는 2로 변경하고 빌드하면 해당 보드의 펌웨어가 됩니다.
-#define MY_NODE_ID 1
+#define MY_NODE_ID 2
 
 // 설비 보드의 CAN ID 자동 할당 (1호기면 0x010, 2호기면 0x020)
 #define MY_CAN_ID (MY_NODE_ID == 1 ? 0x010 : 0x020)
 
 // 설비 가상 상태 변수들 (공유 자원)
-uint8_t currentStatus = 0x00; // 0: 정상, 1: 경고, 2: 에러(인터락)
-uint8_t currentTemp = 45;
-uint16_t currentRpm = 3000;
-uint16_t currentCurrent = 1200;
-uint8_t currentCount = 0;
+volatile uint8_t currentStatus = 0x00;  // 0: 정상, 1: 경고, 2: 에러(인터락)
+volatile uint8_t currentTemp = 45;
+volatile uint16_t currentRpm = 3000;
+volatile uint16_t currentCurrent = 1200;
+volatile uint8_t currentCount = 0;
 
 /* USER CODE END PV */
 
@@ -533,6 +533,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
       // 2. 명령의 타겟이 '전체(0x00)'이거나 '나 자신(MY_NODE_ID)'인지 판별
       if (RxData[0] == 0x00 || RxData[0] == MY_NODE_ID)
       {
+    	  // ★ 여기에 넣어야 진짜 2호기 정지 명령이 도달했는지 증명됩니다!
+    	 HAL_GPIO_TogglePin(GPIOG, LD3_Pin);
          if (RxData[1] == 0xFF) // 0xFF: 긴급 정지(Interlock) 발동
          {
              // 즉시 상태를 에러(2)로 변경하고 구동부 전원(RPM, mA) 강제 차단

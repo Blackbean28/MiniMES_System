@@ -9,7 +9,7 @@ namespace MiniMES_Dashboard
         {
             InitializeComponent();
 
-            // 핵심: 이 화면의 데이터 소스(DataContext)를 우리가 만든 ViewModel로 지정
+            // 핵심: 이 화면의 데이터 소스를 우리가 만든 ViewModel로 지정
             this.DataContext = new DashboardViewModel();
         }
     }

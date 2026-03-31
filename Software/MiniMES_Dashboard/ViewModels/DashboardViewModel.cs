@@ -32,6 +32,8 @@ namespace MiniMES_Dashboard.ViewModels
         private byte _prevNode2Status = 0;
         // 6. DataGrid에 바인딩될 로그 리스트 (WPF 특화: 아이템이 추가되면 화면이 자동 갱신됨)
         public ObservableCollection<EventLogModel> EventLogs { get; set; }
+        // 7. 긴급 정지 변수
+
         public DashboardViewModel()
         {
             // 모델 초기화
@@ -42,8 +44,8 @@ namespace MiniMES_Dashboard.ViewModels
             _serialService = new SerialService();
             _serialService.OnDataReceived += HandleDataReceived;
 
-            // 실제 테스트 시에는 본인의 COM 포트 번호로 변경해야 합니다.
-            _serialService.Connect("COM3", 115200);
+            // 실제 테스트 시에는 본인의 COM 포트 번호로 변경
+            _serialService.Connect("COM11", 115200);
             
             // 3. 커맨드 초기화 (버튼이 눌렸을 때 실행할 동작 정의)
             StopNode1Command = new RelayCommand(param => ExecuteEmergencyStop(1));
@@ -58,21 +60,34 @@ namespace MiniMES_Dashboard.ViewModels
         // 3. 실제 하드웨어로 제어 명령(CAN 브로드캐스트용 UART 패킷)을 내리는 메서드
         private void ExecuteEmergencyStop(byte targetNode)
         {
-            // 통신 서비스를 통해 0xFF(정지 명령) 패킷 전송
+            // 1. 통신 서비스를 통해 0xFF(정지 명령) 패킷 전송
             _serialService.SendInterlockCommand(targetNode);
 
-            // 화면 UI의 상태(Status)를 2(Error)로 즉각 변경하여 시각적 피드백 제공
+            // 2. 화면 UI의 상태(Status)를 2(Error)로 즉각 변경하여 시각적 피드백 제공
             if (targetNode == 1) Node1.Status = 2;
             else if (targetNode == 2) Node2.Status = 2;
 
-            // 실제 프로젝트라면 이 시점에 DB나 CSV에 "수동 긴급 정지 발동" 이력을 로깅해야 합니다.
+            // 3. 작업자의 수동 제어 이력을 화면 DataGrid와 CSV에 명시적으로 기록
+            var manualLog = new EventLogModel
+            {
+                Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                NodeId = $"Node {targetNode}",
+                Status = "MANUAL_STOP",
+                Message = $"[USER COMMAND] 작업자에 의한 {targetNode}호기 수동 긴급 정지 명령 송신"
+            };
+
+            EventLogs.Insert(0, manualLog);
+            if (EventLogs.Count > 100) EventLogs.RemoveAt(EventLogs.Count - 1);
+
+            LogDataToCSV(manualLog);
+
             Console.WriteLine($"[Interlock] {targetNode}호기 긴급 정지 명령 하달됨.");
         }
         // 통신 클래스에서 데이터가 파싱되어 넘어올 때마다 실행되는 콜백 함수
         private void HandleDataReceived(byte nodeId, byte status, byte temp, ushort rpm, ushort current, byte count)
         {
-            // [매우 중요] SerialPort의 DataReceived는 백그라운드 스레드에서 실행됩니다.
-            // UI에 바인딩된 Model을 수정하려면 반드시 UI 스레드(Dispatcher)를 경유해야 충돌(Cross-Thread)이 나지 않습니다.
+            // SerialPort의 DataReceived는 백그라운드 스레드에서 실행됩니다.
+            // UI에 바인딩된 Model을 수정하려면 반드시 UI 스레드를 경유해야 충돌이 나지 않습니다.
             Application.Current.Dispatcher.Invoke(() =>
             {
                 if (nodeId == 1)
@@ -109,12 +124,6 @@ namespace MiniMES_Dashboard.ViewModels
                     if (Node2TempValues.Count > 50) Node2TempValues.RemoveAt(0);
                 }
             });
-        }
-
-        // 인터락(긴급 정지) 명령 하달 메서드 (추후 UI 버튼과 연결)
-        public void TriggerEmergencyStop(byte targetNode)
-        {
-            _serialService.SendInterlockCommand(targetNode);
         }
 
         // 3. 로그 생성 및 CSV 저장 통합 함수

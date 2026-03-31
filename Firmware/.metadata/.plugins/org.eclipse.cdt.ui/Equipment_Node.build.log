@@ -1,0 +1,10 @@
+16:01:17 **** Incremental Build of configuration Debug for project Equipment_Node ****
+make -j20 all 
+arm-none-eabi-size  Equipment_Node.elf 
+   text	   data	    bss	    dec	    hex	filename
+  21588	    116	  18252	  39956	   9c14	Equipment_Node.elf
+Finished building: default.size.stdout
+ 
+
+16:01:18 Build Finished. 0 errors, 0 warnings. (took 223ms)
+

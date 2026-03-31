@@ -1,0 +1,128 @@
+Timestamp,NodeID,Status,Message
+2026-03-31 14:52:28.824,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 14:52:31.455,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 14:52:34.592,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:29:59.769,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:30:04.082,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:30:05.345,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:30:46.954,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:30:47.729,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:30:47.917,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:30:48.113,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:30:48.270,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:30:48.457,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:30:48.673,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:33:06.775,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:33:09.916,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:33:10.572,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:12.592,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:18.088,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:18.838,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:19.682,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:20.437,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:20.729,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:21.509,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:22.176,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:23.709,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:24.563,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:27.097,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:27.523,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:28.035,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:30.129,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:30.669,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:31.026,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:31.485,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:33.863,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:34.651,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:37:34.974,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:43:53.699,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:43:54.037,Node 1,ERROR/INTERLOCK,한계 초과 강제 차단 (64℃)
+2026-03-31 15:44:05.868,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:44:07.473,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:44:24.857,Node 1,ERROR/INTERLOCK,한계 초과 강제 차단 (64℃)
+2026-03-31 15:44:27.148,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:44:32.198,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:44:32.823,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:44:33.325,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:44:33.707,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:45:05.928,Node 1,ERROR/INTERLOCK,한계 초과 강제 차단 (64℃)
+2026-03-31 15:45:15.732,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:45:19.353,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:46:06.354,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:46:09.069,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:46:10.147,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:46:10.269,Node 1,ERROR/INTERLOCK,한계 초과 강제 차단 (62℃)
+2026-03-31 15:46:11.822,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:46:12.943,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:46:13.831,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:47:32.936,Node 1,ERROR/INTERLOCK,한계 초과 강제 차단 (62℃)
+2026-03-31 15:47:41.583,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:47:45.965,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:47:47.649,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:48:10.552,Node 1,ERROR/INTERLOCK,한계 초과 강제 차단 (62℃)
+2026-03-31 15:48:15.673,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:48:18.024,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:48:28.914,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:48:29.652,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:48:30.325,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:48:31.579,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:48:33.481,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:49:17.372,Node 1,NORMAL,정상 가동 복귀
+2026-03-31 15:49:21.618,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:49:38.508,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:49:39.267,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:49:39.875,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:49:40.452,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:49:40.982,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:01.322,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:04.435,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:05.912,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:06.604,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:09.995,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:10.100,Node 1,ERROR/INTERLOCK,한계 초과 강제 차단 (62℃)
+2026-03-31 15:50:10.662,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:12.080,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:12.956,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:36.324,Node 1,NORMAL,정상 가동 복귀
+2026-03-31 15:50:44.988,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:45.620,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:46.072,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:46.717,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:47.645,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:48.077,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:49.017,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:49.396,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:49.806,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:55.490,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:55.962,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:56.447,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:56.742,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:58.210,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:58.271,Node 1,ERROR/INTERLOCK,한계 초과 강제 차단 (64℃)
+2026-03-31 15:50:58.606,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:50:59.717,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:51:00.055,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:53:41.076,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:54:49.265,Node 1,NORMAL,정상 가동 복귀
+2026-03-31 15:54:58.674,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:54:59.142,Node 1,ERROR/INTERLOCK,한계 초과 강제 차단 (61℃)
+2026-03-31 15:55:01.355,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:55:01.827,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:55:02.157,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 15:57:24.719,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:57:26.137,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 15:59:24.751,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 16:01:38.865,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 16:01:41.769,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 16:01:42.388,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 16:01:42.943,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 16:01:43.386,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 16:01:43.860,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 16:04:23.426,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신
+2026-03-31 16:04:23.524,Node 2,ERROR/INTERLOCK,한계 초과 강제 차단 (62℃)
+2026-03-31 16:04:24.500,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 16:04:24.803,Node 1,ERROR/INTERLOCK,한계 초과 강제 차단 (64℃)
+2026-03-31 16:09:16.966,Node 2,ERROR/INTERLOCK,한계 초과 강제 차단 (62℃)
+2026-03-31 16:09:16.988,Node 1,ERROR/INTERLOCK,한계 초과 강제 차단 (64℃)
+2026-03-31 16:09:24.084,Node 1,MANUAL_STOP,[USER COMMAND] 작업자에 의한 1호기 수동 긴급 정지 명령 송신
+2026-03-31 16:09:25.595,Node 2,MANUAL_STOP,[USER COMMAND] 작업자에 의한 2호기 수동 긴급 정지 명령 송신

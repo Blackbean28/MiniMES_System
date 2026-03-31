@@ -1,0 +1,789 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file           : main.c
+  * @brief          : Main program body
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2026 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+#include "cmsis_os.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+typedef struct {
+    uint8_t data[11];
+} Packet_t;
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+CAN_HandleTypeDef hcan1;
+
+UART_HandleTypeDef huart1;
+
+osThreadId defaultTaskHandle;
+osThreadId UartTxTaskHandle;
+osThreadId ControlTaskHandle;
+osMessageQId CanToUartQueueHandle;
+/* USER CODE BEGIN PV */
+
+// [통신 수신용 전역 변수]
+uint8_t rxByte;          // UART로부터 1바이트씩 실시간으로 데이터를 수신받기 위한 임시 보관함
+uint8_t rxBuffer[11];    // C#에서 보낸 11바이트 명령 패킷을 조립하기 위한 수신 전용 버퍼
+uint8_t rxIndex = 0;     // 현재 버퍼의 어느 위치(인덱스)에 데이터를 채우고 있는지 가리키는 포인터
+
+// [RTOS 태스크 핸들 참조]
+// UART 수신 인터럽트(ISR)에서 명령 조립이 완료되면,
+// 즉시 제어 태스크(ControlTask)를 깨우기(Notification) 위한 핸들 주소 참조
+extern osThreadId ControlTaskHandle;
+
+/* USER CODE END PV */
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_CAN1_Init(void);
+static void MX_USART1_UART_Init(void);
+void StartDefaultTask(void const * argument);
+void StartUartTxTask(void const * argument);
+void StartControlTask(void const * argument);
+
+/* USER CODE BEGIN PFP */
+
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
+
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
+
+  /* USER CODE BEGIN 1 */
+
+  /* USER CODE END 1 */
+
+  /* MCU Configuration--------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
+
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
+  SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_CAN1_Init();
+  MX_USART1_UART_Init();
+  /* USER CODE BEGIN 2 */
+
+    // 1. CAN 필터 설정 (게이트웨이 역할에 맞춘 전체 수신 모드)
+    CAN_FilterTypeDef canFilterConfig;
+    canFilterConfig.FilterBank = 0;
+    canFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+    canFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+    // ID와 Mask를 모두 0x0000으로 설정하여, 버스 상의 '모든' CAN 메시지를 필터링 없이 통과시킴
+    canFilterConfig.FilterIdHigh = 0x0000;
+    canFilterConfig.FilterIdLow = 0x0000;
+    canFilterConfig.FilterMaskIdHigh = 0x0000;
+    canFilterConfig.FilterMaskIdLow = 0x0000;
+    canFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0; // 통과된 메시지를 FIFO0 버퍼에 할당
+    canFilterConfig.FilterActivation = ENABLE;
+    canFilterConfig.SlaveStartFilterBank = 14;
+
+    if (HAL_CAN_ConfigFilter(&hcan1, &canFilterConfig) != HAL_OK)
+    {
+      Error_Handler(); // 필터 설정 실패 시 시스템 중단 (안전망)
+    }
+
+    // 2. CAN 컨트롤러 가동 (Init 상태에서 Normal 작동 상태로 전환)
+    if (HAL_CAN_Start(&hcan1) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    // 3. CAN 수신 인터럽트 활성화
+    // FIFO0에 메시지가 도착(Pending)하면 즉시 HAL_CAN_RxFifo0MsgPendingCallback()을 트리거하도록 설정
+    if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    // 4. UART 수신 인터럽트 활성화 (C# 대시보드 명령 수신용)
+    // 1바이트 단위로 끊어서 인터럽트를 발생시키며, 수신된 데이터는 rxByte에 저장됨 (상태 머신 파서로 연결)
+    HAL_UART_Receive_IT(&huart1, &rxByte, 1);
+
+    /* USER CODE END 2 */
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* Create the queue(s) */
+  /* definition and creation of CanToUartQueue */
+  osMessageQDef(CanToUartQueue, 16, Packet_t);
+  CanToUartQueueHandle = osMessageCreate(osMessageQ(CanToUartQueue), NULL);
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* definition and creation of defaultTask */
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  /* definition and creation of UartTxTask */
+  osThreadDef(UartTxTask, StartUartTxTask, osPriorityNormal, 0, 128);
+  UartTxTaskHandle = osThreadCreate(osThread(UartTxTask), NULL);
+
+  /* definition and creation of ControlTask */
+  osThreadDef(ControlTask, StartControlTask, osPriorityAboveNormal, 0, 128);
+  ControlTaskHandle = osThreadCreate(osThread(ControlTask), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
+}
+
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
+void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+  /** Configure the main internal regulator output voltage
+  */
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 180;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 7;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Activate the Over-Drive mode
+  */
+  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+/**
+  * @brief CAN1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CAN1_Init(void)
+{
+
+  /* USER CODE BEGIN CAN1_Init 0 */
+
+  /* USER CODE END CAN1_Init 0 */
+
+  /* USER CODE BEGIN CAN1_Init 1 */
+
+  /* USER CODE END CAN1_Init 1 */
+  hcan1.Instance = CAN1;
+  hcan1.Init.Prescaler = 9;
+  hcan1.Init.Mode = CAN_MODE_NORMAL;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_8TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.TimeTriggeredMode = DISABLE;
+  hcan1.Init.AutoBusOff = DISABLE;
+  hcan1.Init.AutoWakeUp = DISABLE;
+  hcan1.Init.AutoRetransmission = DISABLE;
+  hcan1.Init.ReceiveFifoLocked = DISABLE;
+  hcan1.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN1_Init 2 */
+
+  /* USER CODE END CAN1_Init 2 */
+
+}
+
+/**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOF_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOG_CLK_ENABLE();
+  __HAL_RCC_GPIOE_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, NCS_MEMS_SPI_Pin|CSX_Pin|OTG_FS_PSO_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(ACP_RST_GPIO_Port, ACP_RST_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, RDX_Pin|WRX_DCX_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOG, LD3_Pin|LD4_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : A0_Pin A1_Pin A2_Pin A3_Pin
+                           A4_Pin A5_Pin SDNRAS_Pin A6_Pin
+                           A7_Pin A8_Pin A9_Pin */
+  GPIO_InitStruct.Pin = A0_Pin|A1_Pin|A2_Pin|A3_Pin
+                          |A4_Pin|A5_Pin|SDNRAS_Pin|A6_Pin
+                          |A7_Pin|A8_Pin|A9_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF12_FMC;
+  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : SPI5_SCK_Pin SPI5_MISO_Pin SPI5_MOSI_Pin */
+  GPIO_InitStruct.Pin = SPI5_SCK_Pin|SPI5_MISO_Pin|SPI5_MOSI_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF5_SPI5;
+  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : ENABLE_Pin */
+  GPIO_InitStruct.Pin = ENABLE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF14_LTDC;
+  HAL_GPIO_Init(ENABLE_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : SDNWE_Pin */
+  GPIO_InitStruct.Pin = SDNWE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF12_FMC;
+  HAL_GPIO_Init(SDNWE_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : NCS_MEMS_SPI_Pin CSX_Pin OTG_FS_PSO_Pin */
+  GPIO_InitStruct.Pin = NCS_MEMS_SPI_Pin|CSX_Pin|OTG_FS_PSO_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : B1_Pin MEMS_INT1_Pin MEMS_INT2_Pin TP_INT1_Pin */
+  GPIO_InitStruct.Pin = B1_Pin|MEMS_INT1_Pin|MEMS_INT2_Pin|TP_INT1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : B5_Pin VSYNC_Pin G2_Pin */
+  GPIO_InitStruct.Pin = B5_Pin|VSYNC_Pin|G2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF14_LTDC;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : ACP_RST_Pin */
+  GPIO_InitStruct.Pin = ACP_RST_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(ACP_RST_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : OTG_FS_OC_Pin */
+  GPIO_InitStruct.Pin = OTG_FS_OC_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(OTG_FS_OC_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : R3_Pin R6_Pin */
+  GPIO_InitStruct.Pin = R3_Pin|R6_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF9_LTDC;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : BOOT1_Pin */
+  GPIO_InitStruct.Pin = BOOT1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : A10_Pin A11_Pin BA0_Pin BA1_Pin
+                           SDCLK_Pin SDNCAS_Pin */
+  GPIO_InitStruct.Pin = A10_Pin|A11_Pin|BA0_Pin|BA1_Pin
+                          |SDCLK_Pin|SDNCAS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF12_FMC;
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : D4_Pin D5_Pin D6_Pin D7_Pin
+                           D8_Pin D9_Pin D10_Pin D11_Pin
+                           D12_Pin NBL0_Pin NBL1_Pin */
+  GPIO_InitStruct.Pin = D4_Pin|D5_Pin|D6_Pin|D7_Pin
+                          |D8_Pin|D9_Pin|D10_Pin|D11_Pin
+                          |D12_Pin|NBL0_Pin|NBL1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF12_FMC;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : G4_Pin G5_Pin B6_Pin B7_Pin */
+  GPIO_InitStruct.Pin = G4_Pin|G5_Pin|B6_Pin|B7_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF14_LTDC;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : OTG_HS_ID_Pin OTG_HS_DM_Pin OTG_HS_DP_Pin */
+  GPIO_InitStruct.Pin = OTG_HS_ID_Pin|OTG_HS_DM_Pin|OTG_HS_DP_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF12_OTG_HS_FS;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : VBUS_HS_Pin */
+  GPIO_InitStruct.Pin = VBUS_HS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(VBUS_HS_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : D13_Pin D14_Pin D15_Pin D0_Pin
+                           D1_Pin D2_Pin D3_Pin */
+  GPIO_InitStruct.Pin = D13_Pin|D14_Pin|D15_Pin|D0_Pin
+                          |D1_Pin|D2_Pin|D3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF12_FMC;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : TE_Pin */
+  GPIO_InitStruct.Pin = TE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(TE_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : RDX_Pin WRX_DCX_Pin */
+  GPIO_InitStruct.Pin = RDX_Pin|WRX_DCX_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : R7_Pin DOTCLK_Pin B3_Pin */
+  GPIO_InitStruct.Pin = R7_Pin|DOTCLK_Pin|B3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF14_LTDC;
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : HSYNC_Pin G6_Pin R2_Pin */
+  GPIO_InitStruct.Pin = HSYNC_Pin|G6_Pin|R2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF14_LTDC;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : I2C3_SDA_Pin */
+  GPIO_InitStruct.Pin = I2C3_SDA_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF4_I2C3;
+  HAL_GPIO_Init(I2C3_SDA_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : I2C3_SCL_Pin */
+  GPIO_InitStruct.Pin = I2C3_SCL_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF4_I2C3;
+  HAL_GPIO_Init(I2C3_SCL_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : G7_Pin B2_Pin */
+  GPIO_InitStruct.Pin = G7_Pin|B2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF14_LTDC;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : G3_Pin B4_Pin */
+  GPIO_InitStruct.Pin = G3_Pin|B4_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF9_LTDC;
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LD3_Pin LD4_Pin */
+  GPIO_InitStruct.Pin = LD3_Pin|LD4_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : SDCKE1_Pin SDNE1_Pin */
+  GPIO_InitStruct.Pin = SDCKE1_Pin|SDNE1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF12_FMC;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
+}
+
+/* USER CODE BEGIN 4 */
+
+// CAN 수신 인터럽트 콜백 함수 (FIFO0에 메시지가 도착하면 하드웨어 인터럽트에 의해 자동 호출됨)
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+  CAN_RxHeaderTypeDef RxHeader;
+  uint8_t RxData[8];
+
+  // 1. CAN 하드웨어의 FIFO0 버퍼에서 수신된 메시지와 헤더 정보를 읽어옴
+  if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) == HAL_OK)
+  {
+    // 2. 타겟 필터링: 수신된 데이터가 허가된 하위 설비(1호기: 0x010, 2호기: 0x020)의 데이터인지 검증
+    if (RxHeader.StdId == 0x010 || RxHeader.StdId == 0x020)
+    {
+      // 3. 수신된 CAN ID를 기반으로 내부 논리적 Node ID(1 또는 2) 매핑
+      uint8_t nodeId = (RxHeader.StdId == 0x010) ? 1 : 2;
+
+      // 4. PC(C# 대시보드)로 전송하기 위한 11바이트 UART 통신 프로토콜 패킷 조립
+      // [패킷 구조] STX(1) + NodeID(1) + Payload(8) + ETX(1) = 11 Bytes
+      uint8_t uartPacket[11];
+      uartPacket[0] = 0x02;     // STX (Start of Text - 시작 문자)
+      uartPacket[1] = nodeId;   // 발생지 Node ID
+
+      for(int i = 0; i < 8; i++)
+      {
+          uartPacket[2 + i] = RxData[i]; // CAN 수신 데이터(Payload) 8바이트를 순차적으로 복사
+      }
+      uartPacket[10] = 0x03;    // ETX (End of Text - 종료 문자)
+
+      // 5. FreeRTOS 큐(Queue)를 활용한 태스크 간 통신 (인터럽트 컨텍스트 안전성 확보)
+      extern osMessageQId CanToUartQueueHandle;
+      BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+      // 일반 xQueueSend가 아닌, ISR(인터럽트 서비스 루틴) 전용 API를 사용하여 큐에 패킷 적재
+      xQueueSendFromISR(CanToUartQueueHandle, uartPacket, &xHigherPriorityTaskWoken);
+
+      // 6. 큐 적재로 인해 대기 중이던 UartTxTask가 실행 가능한 상태(Ready)가 되었다면,
+      // 인터럽트 종료 직후 즉각적인 문맥 교환(Context Switching)을 트리거하여 지연(Latency) 최소화
+      portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
+  }
+}
+
+// UART 1바이트 수신 완료 콜백
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if (huart->Instance == USART1)
+  {
+    if (rxIndex == 0)
+    {
+      // 1. 버퍼가 비어있을 때만 0x02를 '시작 신호'로 인정함
+      if (rxByte == 0x02)
+      {
+        rxBuffer[rxIndex++] = rxByte;
+      }
+    }
+    else
+    {
+      // 2. 이미 데이터가 들어오는 중이라면, 0x02가 들어와도 데이터(Node ID)로 취급하고 계속 담음
+      rxBuffer[rxIndex++] = rxByte;
+
+      if (rxIndex >= 11) // 11바이트가 다 모이면 검사
+      {
+        if (rxBuffer[10] == 0x03) // 끝이 0x03으로 잘 닫혔는가?
+        {
+          BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+          vTaskNotifyGiveFromISR(ControlTaskHandle, &xHigherPriorityTaskWoken);
+          portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        }
+        rxIndex = 0; // 처리가 끝났거나 불량 데이터면 다음 STX를 받기 위해 초기화
+      }
+    }
+
+    HAL_UART_Receive_IT(&huart1, &rxByte, 1); // 다음 1바이트 수신 대기
+  }
+}
+/* USER CODE END 4 */
+
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void const * argument)
+{
+  /* USER CODE BEGIN 5 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_StartUartTxTask */
+/**
+* @brief Function implementing the UartTxTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartUartTxTask */
+void StartUartTxTask(void const * argument)
+{
+  /* USER CODE BEGIN StartUartTxTask */
+  /* Infinite loop */
+	// ?��?��?�� 꺼낸 11바이?�� ?��?��?���? ?��?�� 보�??�� 버퍼
+	  //uint8_t txBuffer[11];
+	  Packet_t receivedPacket;
+	  // CubeIDE�? ?��?�� ?��?��?�� UART ?��?��?�� 참조 (보통 huart1 ?��?�� huart2)
+	  extern UART_HandleTypeDef huart1;
+
+	  /* Infinite loop */
+	  for(;;)
+	  {
+	    // 1. ?��?��?�� ?��?��?�� 꺼내�? ??�? (portMAX_DELAY: ?��?��?���? ?��?��?�� ?��까�? 무한?�� ??기하�? CPU ?��?��)
+	    // ?��?�� CAN ISR?��?�� xQueueSendFromISR�? ?��?��?���? ?��?���? ?�� ?��?���? 즉시 반응?��?�� 깨어?��?��?��.
+	    if (xQueueReceive(CanToUartQueueHandle, &receivedPacket, portMAX_DELAY) == pdPASS)
+	    {
+	      // 2. PC(C# ???��보드)�? 11바이?�� ?��?�� ?��?��
+	      // Timeout?�� 100ms�? ?��?��?��?�� ?��?�� ?���? 문제 ?�� 무한 ?���??��?�� 것을 방�?
+	      if (HAL_UART_Transmit(&huart1, receivedPacket.data, 11, 100) != HAL_OK)
+	      {
+	         // ?��?�� ?��?�� ?�� ?��?�� 처리 (?��: ?��?�� 카운?�� 증�? ?��?�� LED ?���?)
+	      }
+	    }
+	  }
+  /* USER CODE END StartUartTxTask */
+}
+
+/* USER CODE BEGIN Header_StartControlTask */
+/**
+* @brief Function implementing the ControlTask thread.
+*/
+/* USER CODE END Header_StartControlTask */
+void StartControlTask(void const * argument)
+{
+  /* USER CODE BEGIN StartControlTask */
+  CAN_TxHeaderTypeDef TxHeader;
+  uint32_t TxMailbox;
+
+  // ?��?��?�� CAN ?��?�� ?��?��?�� 뼈�? ?��?�� (�??�� ?��?? ?��?��?��?�� ID: 0x001 �??��)
+  TxHeader.StdId = 0x001;
+  TxHeader.RTR = CAN_RTR_DATA;
+  TxHeader.IDE = CAN_ID_STD;
+  TxHeader.DLC = 8;
+
+  /* Infinite loop */
+  for(;;)
+  {
+    // 1. UART ISR?��?�� ?��?��?�� ?��?��?��?��?��?�� ?��?��(Notification)�? ?�� ?��까�? ??�? (CPU ?��?��)
+    if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) > 0)
+    {
+    	// ★ PC에서 명령이 정상적으로 넘어오면 보드의 초록색 LED가 켜지거나 꺼짐
+    	    HAL_GPIO_TogglePin(GPIOG, LD3_Pin);
+      // 2. rxBuffer?�� ?���? C# 명령 ?��?��
+      // rxBuffer[1] = Target Node (1 or 2)
+      // rxBuffer[2] = Command (0xFF: 긴급?���?)
+
+      uint8_t TxData[8] = {0}; // 8바이?���? 모두 0?���? 초기?��
+      TxData[0] = rxBuffer[1]; // ?��구�?? 멈출 것인�??
+      TxData[1] = rxBuffer[2]; // 무엇?�� ?�� 것인�?? (0xFF)
+
+      // 3. CAN 버스�? 0x001 ?��?��?�� 브로?��캐스?�� ?��?��
+      // ?�� 메시�?�? 버스?�� ?��리는 ?���?, ?���? 모든 ?��?��?�� ?��?��?? 중단(Arbitration)?���? ?��것�??�� 처리?��
+      if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+      {
+        // ?��?�� ?��?�� ?�� ?��?�� 처리
+      }
+    }
+  }
+  /* USER CODE END StartControlTask */
+}
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq();
+  while (1)
+  {
+  }
+  /* USER CODE END Error_Handler_Debug */
+}
+
+#ifdef  USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t *file, uint32_t line)
+{
+  /* USER CODE BEGIN 6 */
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* USER CODE END 6 */
+}
+#endif /* USE_FULL_ASSERT */

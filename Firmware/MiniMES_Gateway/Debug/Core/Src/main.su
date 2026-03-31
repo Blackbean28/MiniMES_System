@@ -1,0 +1,11 @@
+../Core/Src/main.c:84:5:main	160	static
+../Core/Src/main.c:204:6:SystemClock_Config	88	static
+../Core/Src/main.c:258:13:MX_CAN1_Init	8	static
+../Core/Src/main.c:295:13:MX_USART1_UART_Init	8	static
+../Core/Src/main.c:328:13:MX_GPIO_Init	64	static
+../Core/Src/main.c:577:6:HAL_CAN_RxFifo0MsgPendingCallback	80	static,ignoring_inline_asm
+../Core/Src/main.c:617:6:HAL_UART_RxCpltCallback	24	static,ignoring_inline_asm
+../Core/Src/main.c:658:6:StartDefaultTask	16	static
+../Core/Src/main.c:676:6:StartUartTxTask	32	static
+../Core/Src/main.c:709:6:StartControlTask	56	static
+../Core/Src/main.c:752:6:Error_Handler	4	static,ignoring_inline_asm
