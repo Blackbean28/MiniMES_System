@@ -57,9 +57,13 @@ namespace MiniMES_Dashboard.Services
 
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine($"[1단계] 데이터 수신 이벤트 발생! 읽을 바이트 수: {_serialPort.BytesToRead}");
             int bytesToRead = _serialPort.BytesToRead;
             byte[] tempBuffer = new byte[bytesToRead];
             _serialPort.Read(tempBuffer, 0, bytesToRead);
+
+            // 들어오는 데이터의 Hex을 확인합니다.
+            System.Diagnostics.Debug.WriteLine($"[RAW DATA] {BitConverter.ToString(tempBuffer)}");
 
             // 1. 수신된 바이트를 내부 버퍼에 누적 (스트림 파편화 대응)
             _buffer.AddRange(tempBuffer);
@@ -72,6 +76,7 @@ namespace MiniMES_Dashboard.Services
                     if (_buffer[10] == 0x03) // 종료 바이트(ETX) 확인 (정상 패킷)
                     {
                         byte[] validPacket = _buffer.GetRange(0, 11).ToArray();
+                        System.Diagnostics.Debug.WriteLine($"[2단계] 11바이트 완벽 파싱 성공! NodeID: {validPacket[1]}, Temp: {validPacket[3]}");
                         ParsePacket(validPacket);
 
                         // 처리한 패킷은 버퍼에서 삭제
@@ -97,13 +102,23 @@ namespace MiniMES_Dashboard.Services
             byte status = packet[2];
             byte temp = packet[3];
 
-            // 리틀 엔디안 변환 (STM32 -> PC)
             ushort rpm = BitConverter.ToUInt16(packet, 4);
             ushort current = BitConverter.ToUInt16(packet, 6);
             byte count = packet[8];
 
-            // ViewModel로 데이터 전달 (구독자가 있을 때만 실행)
-            OnDataReceived?.Invoke(nodeId, status, temp, rpm, current, count);
+            try
+            {
+                // ViewModel로 데이터 전달
+                OnDataReceived?.Invoke(nodeId, status, temp, rpm, current, count);
+
+                // 🚩 [디버깅 3단계] UI 측(ViewModel)으로 에러 없이 넘어갔는지 확인
+                System.Diagnostics.Debug.WriteLine($"[3단계] ViewModel로 데이터 전달 성공 (Node: {nodeId})");
+            }
+            catch (Exception ex)
+            {
+                // 🚩 [치명적 에러] 스레드 충돌이나 바인딩 에러 발생 시
+                System.Diagnostics.Debug.WriteLine($"[치명적 에러] ViewModel 전달 실패: {ex.Message}");
+            }
         }
     }
 }

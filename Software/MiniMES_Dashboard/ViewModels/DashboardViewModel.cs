@@ -43,7 +43,7 @@ namespace MiniMES_Dashboard.ViewModels
             _serialService.OnDataReceived += HandleDataReceived;
 
             // 실제 테스트 시에는 본인의 COM 포트 번호로 변경해야 합니다.
-            _serialService.Connect("COM3", 115200);
+            _serialService.Connect("COM11", 115200);
             
             // 3. 커맨드 초기화 (버튼이 눌렸을 때 실행할 동작 정의)
             StopNode1Command = new RelayCommand(param => ExecuteEmergencyStop(1));
