@@ -1,49 +1,74 @@
-# 🏭 Mini-MES: IT-OT 융합형 분산 제어 및 모니터링 시스템
+# 🚀 Multi-Node Distributed Control System
+## (Mini-MES Prototype)
 
-## 1. Project Overview (프로젝트 개요)
-본 프로젝트는 생산 라인의 하위 설비(OT) 데이터 수집부터 상위 대시보드(IT)의 모니터링 및 제어까지 아우르는 **통합 제조 실행 시스템(Mini-MES)의 MVP(Minimum Viable Product)**입니다. 
-단일 컨트롤러에 의존하는 모놀리식(Monolithic) 제어의 한계를 극복하고자, **게이트웨이를 통한 라우팅과 엣지 노드의 분산 제어 아키텍처**를 설계하여 시스템의 실시간성(Real-time)과 신뢰성(Reliability)을 검증했습니다.
+> **STM32(FreeRTOS)와 C# WPF를 활용한 다중 노드 실시간 모니터링 및 원격 긴급 제어 시스템**
 
-## 2. System Architecture (시스템 아키텍처)
-*(여기에 Draw.io 등으로 그린 아키텍처 다이어그램 이미지를 삽입하세요)*
-
-* **[IT Layer] PC Dashboard (C# WPF):** 실시간 데이터 시각화, 예지보전 트렌드 분석, 상태 전이 기반 로깅 및 긴급 제어 명령 하달.
-* **[Gateway Layer] Master Node (STM32 F429 + FreeRTOS):** CAN-UART 이종 통신 간 비동기 라우팅, 병목 현상 완화를 위한 Queue 기반 버퍼링.
-* **[Edge Layer] Equipment Node (STM32 F429):** 센서 데이터(Temp, RPM, Current) 취합 및 CAN 송신, 최고 우선순위 ISR 기반의 하드웨어 인터락(Fail-Safe) 구동.
+본 프로젝트는 산업 현장의 **제조 실행 시스템(MES)** 아키텍처를 모사하여, 게이트웨이를 중심으로 다중 하위 노드(설비)의 데이터를 실시간으로 수집하고 위급 상황 시 즉각적인 인터락을 수행하는 분산 제어 시스템입니다.
 
 ---
 
-## 3. Core Technology & Justification (핵심 기술 및 도입 당위성)
+## 🛠 Tech Stack
 
-### 💻 IT (상위 시스템): C# WPF 기반 비동기 대시보드
-* **ICommand 기반 UI-로직 분리 (Decoupling):**
-  * **도입 배경:** 기존 Event Handler(Click) 방식은 UI 스레드가 멈추면 제어 명령도 마비되는 안전 결함이 존재함.
-  * **당위성/효과:** MVVM 패턴의 `ICommand`를 적용하여 비즈니스 로직과 UI를 완벽히 분리, 화면 렌더링 부하와 무관하게 즉각적인 제어 패킷(Interlock)이 하달되는 산업용 표준 구조 확립.
-* **이벤트 드리븐(Event-Driven) 로깅 및 메모리 최적화:**
-  * **도입 배경:** 밀리초 단위로 쏟아지는 센서 데이터를 모두 파일(I/O)에 쓰면 병목 및 시스템 다운 발생.
-  * **당위성/효과:** 이전 상태(Previous State)와 현재 상태를 비교하여 전이(Transition)가 일어난 시점에만 선별적으로 CSV에 기록하도록 최적화. LiveCharts 시계열 데이터는 FIFO 큐 버퍼링을 적용해 OOM(Out of Memory)을 원천 차단.
+### **Hardware & Firmware**
+* **MCU:** STM32F429ZI (Gateway & Nodes)
+* **OS:** FreeRTOS (Real-time Task Scheduling)
+* **Language/IDE:** C (STM32CubeIDE), HAL Drivers
+* **Communication:** CAN 2.0B (Internal Bus), UART (External/PC Link)
 
-### ⚙️ OT (하위 시스템): STM32 & FreeRTOS 기반 하드웨어 제어망
-* **통신 병목 해결을 위한 RTOS Task & Queue 설계:**
-  * **도입 배경:** 고속의 CAN 통신(500kbps) 데이터를 저속의 UART(115.2kbps)로 변환 시, 폴링(Polling) 방식을 사용하면 데이터 유실(Data Loss)이 발생함.
-  * **당위성/효과:** 수신은 하드웨어 ISR로 즉각 처리하여 큐(Queue)에 적재하고, UART 송신 전담 Task를 분리 구성함. 이를 통해 느린 전송 속도가 시스템 전체를 블로킹(Blocking)하지 않도록 비동기 파이프라인 구축.
-* **결정론적 응답성(Deterministic)을 위한 Task Notification 및 하드웨어 필터링:**
-  * **도입 배경:** 엣지 노드에서 올라오는 트래픽 폭주 상황에서도 상위의 '긴급 정지' 명령은 즉각 처리되어야 함.
-  * **당위성/효과:** 수신된 긴급 제어 패킷은 무거운 Queue 대신 오버헤드가 가장 적은 `Task Notification`으로 즉시 컨텍스트 스위칭(Context Switching)함. CAN 제어 프레임 ID를 최우선 순위(`0x001`)로 할당하여, 물리적 버스 충돌 상황에서도 제어 명령이 1순위로 하달되는 Fail-Safe 시스템 구현.
-* **단일 코드베이스(Single Codebase) 매크로 스위칭:**
-  * **도입 배경:** 다수의 설비 노드 펌웨어를 개별 프로젝트로 관리하면 유지보수 비용이 급증함.
-  * **당위성/효과:** C 전처리기 매크로(`#define NODE_ID`)를 활용하여 소스 코드 하나로 1호기, 2호기 펌웨어를 동적 생성할 수 있는 양산 친화적 형상 관리 적용.
+### **Software (Dashboard)**
+* **Framework:** C# WPF (.NET)
+* **Pattern:** MVVM (Model-View-ViewModel)
+* **Library:** LiveCharts 
 
 ---
 
-## 4. Key Features (주요 기능)
-1. **Real-time Predictive Maintenance:** LiveCharts를 활용한 온도/전류 트렌드 실시간 시각화 및 FIFO 메모리 관리.
-2. **Hardware-Level Interlock:** 대시보드 비상 정지 명령 시, OS 스케줄링을 거치지 않고 하위 보드의 ISR에서 즉각 액추에이터 구동 차단.
-3. **Asynchronous Traceability:** 시스템 상태 변화 시점에만 동작하는 비동기 이벤트 DataGrid 표출 및 일자별 CSV 로깅.
+## 🏗 System Architecture
 
-## 5. Environment & Tech Stack
-* **Language:** C# (WPF, .NET), C (Firmware)
-* **MCU/Hardware:** STM32F429I-DISC1, CAN Transceiver
-* **OS / IDE:** FreeRTOS (CMSIS_V1), STM32CubeIDE, Visual Studio 2022
-* **Communication:** CAN 2.0B (500kbps), UART (115200bps)
-* **Version Control:** Git Monorepo (Hardware + Software 통합 관리)
+시스템은 Uplink(데이터 수집)와 Downlink(명령 하달)의 이종 통신 파이프라인으로 구성됩니다.
+
+1.  **Nodes (1 & 2):** 500ms 주기로 센서 데이터(Temp, RPM, Current) 생성 및 CAN 브로드캐스트.
+2.  **Gateway:** 다중 노드 CAN 데이터 병합 및 UART 프로토콜 변환(Bridge).
+3.  **Dashboard:** UART 패킷 파싱, 실시간 차트 렌더링 및 CSV 데이터 로깅.
+
+---
+
+## 📑 Communication Protocol (11-Byte)
+
+데이터 무결성을 위해 **STX/ETX 구조**의 사용자 정의 프로토콜을 설계하였습니다.
+
+| Index | Field | Value/Description |
+| :--- | :--- | :--- |
+| 0 | **STX** | Start of Text (0x02) |
+| 1 | **Node ID** | 0x01 (Node 1) / 0x02 (Node 2) |
+| 2~9 | **Data/CMD** | Payload (Sensor Data or Control CMD) |
+| 10 | **ETX** | End of Text (0x03) |
+
+---
+
+## 🚨 Key Troubleshooting (핵심 기술 역량)
+
+단순 기능 구현을 넘어, 개발 과정에서 발생한 하드웨어 및 소프트웨어 제약 사항을 논리적으로 해결한 기록입니다.
+
+### 1️⃣ In-band Signaling 충돌 방어 (State Machine Parser)
+* **Issue:** 통신 시작 문자(STX: 0x02)와 2호기의 ID(0x02) 값이 겹치면서, 수신 버퍼 인덱스가 0으로 초기화되어 2호기 제어 명령이 무시되는 현상 발생.
+* **Solution:** 단순 조건문이 아닌 **상태 머신(State Machine) 구조**를 도입. `rxIndex == 0`일 때만 STX를 판별하도록 설계하여, 데이터 영역의 0x02가 제어 문자로 오인되는 현상을 완벽히 방어.
+
+### 2️⃣ RTOS Task-ISR 동기화 및 지연 최소화
+* **Issue:** 고속 CAN 통신 시 데이터 병목으로 인한 큐 오버플로우 및 제어 지연 발생.
+* **Solution:** `osMessageQ`의 요소 크기를 구조체(`Packet_t`) 단위로 정밀 할당하고, `portYIELD_FROM_ISR`을 통해 인터럽트 직후 즉각적인 Context Switching을 트리거하여 시스템 실시간성 확보.
+
+### 3️⃣ 컴파일러 최적화 대응 및 메모리 동기화 (`volatile`)
+* **Issue:** CAN 인터럽트(ISR)에서 변경한 긴급 정지 상태 변수가 메인 가동 Task에 즉시 반영되지 않아 장비 정지가 지연되는 현상.
+* **Solution:** 컴파일러 최적화에 의한 레지스터 캐싱을 방지하기 위해 핵심 제어 변수에 **`volatile`** 키워드 적용. 메모리 직접 참조를 강제하여 인터럽트 상황에서의 제어 신뢰성 증명.
+
+---
+
+## 📈 주요 기능
+
+* **Real-time Monitoring:** 하위 노드 2종의 가동 데이터를 LiveCharts로 시각화.
+* **Remote Interlock:** 비상 상황 시 중앙 대시보드에서 10ms 이내의 속도로 개별 노드 전력 차단.
+* **Data Traceability:** 모든 이벤트 및 가동 이력을 일자별 CSV 파일로 자동 로깅하여 추적성 확보.
+
+---
+
+> **"임베디드 제어의 안정성은 단순히 기능을 구현하는 것이 아니라, 통신 노이즈와 하드웨어적 예외 상황을 얼마나 견고하게 방어하느냐에 달려있음을 배웠습니다."**
