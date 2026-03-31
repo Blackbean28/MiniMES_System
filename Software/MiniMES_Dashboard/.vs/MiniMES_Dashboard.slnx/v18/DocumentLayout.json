@@ -7,28 +7,28 @@
       "RelativeMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|c:\\users\\seungmin\\desktop\\minimes_system\\software\\minimes_dashboard\\viewmodels\\dashboardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|solutionrelative:viewmodels\\dashboardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|c:\\users\\seungmin\\desktop\\minimes_system\\software\\minimes_dashboard\\models\\eventlogmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|solutionrelative:models\\eventlogmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|c:\\users\\seungmin\\desktop\\minimes_system\\software\\minimes_dashboard\\models\\equipmentmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|solutionrelative:models\\equipmentmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|c:\\users\\seungmin\\desktop\\minimes_system\\software\\minimes_dashboard\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|c:\\users\\seungmin\\desktop\\minimes_system\\software\\minimes_dashboard\\viewmodels\\relaycommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|solutionrelative:viewmodels\\relaycommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|c:\\users\\seungmin\\desktop\\minimes_system\\software\\minimes_dashboard\\models\\equipmentmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|solutionrelative:models\\equipmentmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|c:\\users\\seungmin\\desktop\\minimes_system\\software\\minimes_dashboard\\viewmodels\\dashboardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|solutionrelative:viewmodels\\dashboardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|c:\\users\\seungmin\\desktop\\minimes_system\\software\\minimes_dashboard\\services\\serialservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|solutionrelative:services\\serialservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|c:\\users\\seungmin\\desktop\\minimes_system\\software\\minimes_dashboard\\models\\eventlogmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|solutionrelative:models\\eventlogmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|c:\\users\\seungmin\\desktop\\minimes_system\\software\\minimes_dashboard\\viewmodels\\relaycommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CC712EE7-5170-4319-D3C0-A522A4C46BC7}|MiniMES_Dashboard.csproj|solutionrelative:viewmodels\\relaycommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -66,33 +66,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "DashboardViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\ViewModels\\DashboardViewModel.cs",
-              "RelativeDocumentMoniker": "ViewModels\\DashboardViewModel.cs",
-              "ToolTip": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\ViewModels\\DashboardViewModel.cs",
-              "RelativeToolTip": "ViewModels\\DashboardViewModel.cs",
-              "ViewState": "AgIAAG8AAAAAAAAAAAAYwHoAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-30T06:08:06.435Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "EventLogModel.cs",
-              "DocumentMoniker": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\Models\\EventLogModel.cs",
-              "RelativeDocumentMoniker": "Models\\EventLogModel.cs",
-              "ToolTip": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\Models\\EventLogModel.cs",
-              "RelativeToolTip": "Models\\EventLogModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-30T06:42:33.987Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "MainWindow.xaml.cs",
@@ -105,7 +79,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "RelayCommand.cs",
               "DocumentMoniker": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\ViewModels\\RelayCommand.cs",
               "RelativeDocumentMoniker": "ViewModels\\RelayCommand.cs",
@@ -113,34 +87,58 @@
               "RelativeToolTip": "ViewModels\\RelayCommand.cs",
               "ViewState": "AgIAAAUAAAAAAAAAAAAuwBsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-30T06:30:36.244Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-30T06:30:36.244Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 1,
               "Title": "EquipmentModel.cs",
               "DocumentMoniker": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\Models\\EquipmentModel.cs",
               "RelativeDocumentMoniker": "Models\\EquipmentModel.cs",
               "ToolTip": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\Models\\EquipmentModel.cs",
               "RelativeToolTip": "Models\\EquipmentModel.cs",
-              "ViewState": "AgIAACMAAAAAAAAAAAAuwCgAAAASAAAAAAAAAA==",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAIwAgAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-30T06:07:35.662Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 4,
               "Title": "SerialService.cs",
               "DocumentMoniker": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\Services\\SerialService.cs",
               "RelativeDocumentMoniker": "Services\\SerialService.cs",
               "ToolTip": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\Services\\SerialService.cs",
               "RelativeToolTip": "Services\\SerialService.cs",
-              "ViewState": "AgIAAFYAAAAAAAAAAAAuwGEAAAAXAAAAAAAAAA==",
+              "ViewState": "AgIAAEYAAAAAAAAAAAAIwEUAAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-30T06:02:11.908Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DashboardViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\ViewModels\\DashboardViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\DashboardViewModel.cs",
+              "ToolTip": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\ViewModels\\DashboardViewModel.cs",
+              "RelativeToolTip": "ViewModels\\DashboardViewModel.cs",
+              "ViewState": "AgIAAJAAAAAAAAAAAAAowKIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-30T06:08:06.435Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "EventLogModel.cs",
+              "DocumentMoniker": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\Models\\EventLogModel.cs",
+              "RelativeDocumentMoniker": "Models\\EventLogModel.cs",
+              "ToolTip": "C:\\Users\\SeungMin\\Desktop\\MiniMES_System\\Software\\MiniMES_Dashboard\\Models\\EventLogModel.cs",
+              "RelativeToolTip": "Models\\EventLogModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-30T06:42:33.987Z"
             }
           ]
         },
